@@ -1,0 +1,487 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "authorship_tag": "ABX9TyOBBNg+ZFoYMcrZN7ZRWVBe",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/dharmasastha17/FDS-LAB/blob/main/fds%20class\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 1,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "Xq6-fhkYcdHY",
+        "outputId": "6fefdbc0-65e4-4d87-afba-d95552fc28f7"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "   Student_ID        Date  Study_Hours  Attendance  Math_Marks  ML_Marks  \\\n",
+            "0         101  2026-01-05          2.5          78          65        70   \n",
+            "1         102  2026-01-06          4.0          85          72        80   \n",
+            "2         103  2026-01-07          1.5          65          55        60   \n",
+            "3         104  2026-01-08          5.0          92          88        91   \n",
+            "4         105  2026-01-09          3.5          88          76        75   \n",
+            "5         106  2026-01-10          6.0          95          95        96   \n",
+            "6         107  2026-01-11          2.0          70          60        65   \n",
+            "7         108  2026-01-12          4.5          90          84        86   \n",
+            "8         109  2026-01-13          3.0          80          70        73   \n",
+            "9         110  2026-01-14          5.5          93          91        89   \n",
+            "\n",
+            "   Final_Marks  \n",
+            "0           68  \n",
+            "1           76  \n",
+            "2           58  \n",
+            "3           90  \n",
+            "4           76  \n",
+            "5           95  \n",
+            "6           63  \n",
+            "7           85  \n",
+            "8           72  \n",
+            "9           91  \n"
+          ]
+        }
+      ],
+      "source": [
+        "import pandas as pd\n",
+        "\n",
+        "data = {\n",
+        "    \"Student_ID\": [101,102,103,104,105,106,107,108,109,110],\n",
+        "    \"Date\": [\n",
+        "        \"2026-01-05\",\"2026-01-06\",\"2026-01-07\",\"2026-01-08\",\"2026-01-09\",\n",
+        "        \"2026-01-10\",\"2026-01-11\",\"2026-01-12\",\"2026-01-13\",\"2026-01-14\"\n",
+        "    ],\n",
+        "    \"Study_Hours\": [2.5,4.0,1.5,5.0,3.5,6.0,2.0,4.5,3.0,5.5],\n",
+        "    \"Attendance\": [78,85,65,92,88,95,70,90,80,93],\n",
+        "    \"Math_Marks\": [65,72,55,88,76,95,60,84,70,91],\n",
+        "    \"ML_Marks\": [70,80,60,91,75,96,65,86,73,89],\n",
+        "    \"Final_Marks\": [68,76,58,90,76,95,63,85,72,91]\n",
+        "}\n",
+        "\n",
+        "df = pd.DataFrame(data)\n",
+        "\n",
+        "print(df)"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "print(df.head())\n",
+        "print(df.tail())\n",
+        "print(df.shape)\n",
+        "print(df.info())\n",
+        "print(df.isnull())\n",
+        "print(df.isnull().sum())"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "Ne6D7BTMhMBR",
+        "outputId": "5e757e9d-20a8-48a9-aab5-a94fdec6c48f"
+      },
+      "execution_count": 2,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "   Student_ID        Date  Study_Hours  Attendance  Math_Marks  ML_Marks  \\\n",
+            "0         101  2026-01-05          2.5          78          65        70   \n",
+            "1         102  2026-01-06          4.0          85          72        80   \n",
+            "2         103  2026-01-07          1.5          65          55        60   \n",
+            "3         104  2026-01-08          5.0          92          88        91   \n",
+            "4         105  2026-01-09          3.5          88          76        75   \n",
+            "\n",
+            "   Final_Marks  \n",
+            "0           68  \n",
+            "1           76  \n",
+            "2           58  \n",
+            "3           90  \n",
+            "4           76  \n",
+            "   Student_ID        Date  Study_Hours  Attendance  Math_Marks  ML_Marks  \\\n",
+            "5         106  2026-01-10          6.0          95          95        96   \n",
+            "6         107  2026-01-11          2.0          70          60        65   \n",
+            "7         108  2026-01-12          4.5          90          84        86   \n",
+            "8         109  2026-01-13          3.0          80          70        73   \n",
+            "9         110  2026-01-14          5.5          93          91        89   \n",
+            "\n",
+            "   Final_Marks  \n",
+            "5           95  \n",
+            "6           63  \n",
+            "7           85  \n",
+            "8           72  \n",
+            "9           91  \n",
+            "(10, 7)\n",
+            "<class 'pandas.core.frame.DataFrame'>\n",
+            "RangeIndex: 10 entries, 0 to 9\n",
+            "Data columns (total 7 columns):\n",
+            " #   Column       Non-Null Count  Dtype  \n",
+            "---  ------       --------------  -----  \n",
+            " 0   Student_ID   10 non-null     int64  \n",
+            " 1   Date         10 non-null     object \n",
+            " 2   Study_Hours  10 non-null     float64\n",
+            " 3   Attendance   10 non-null     int64  \n",
+            " 4   Math_Marks   10 non-null     int64  \n",
+            " 5   ML_Marks     10 non-null     int64  \n",
+            " 6   Final_Marks  10 non-null     int64  \n",
+            "dtypes: float64(1), int64(5), object(1)\n",
+            "memory usage: 692.0+ bytes\n",
+            "None\n",
+            "   Student_ID   Date  Study_Hours  Attendance  Math_Marks  ML_Marks  \\\n",
+            "0       False  False        False       False       False     False   \n",
+            "1       False  False        False       False       False     False   \n",
+            "2       False  False        False       False       False     False   \n",
+            "3       False  False        False       False       False     False   \n",
+            "4       False  False        False       False       False     False   \n",
+            "5       False  False        False       False       False     False   \n",
+            "6       False  False        False       False       False     False   \n",
+            "7       False  False        False       False       False     False   \n",
+            "8       False  False        False       False       False     False   \n",
+            "9       False  False        False       False       False     False   \n",
+            "\n",
+            "   Final_Marks  \n",
+            "0        False  \n",
+            "1        False  \n",
+            "2        False  \n",
+            "3        False  \n",
+            "4        False  \n",
+            "5        False  \n",
+            "6        False  \n",
+            "7        False  \n",
+            "8        False  \n",
+            "9        False  \n",
+            "Student_ID     0\n",
+            "Date           0\n",
+            "Study_Hours    0\n",
+            "Attendance     0\n",
+            "Math_Marks     0\n",
+            "ML_Marks       0\n",
+            "Final_Marks    0\n",
+            "dtype: int64\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "df[\"Date\"] = pd.to_datetime(df[\"Date\"])\n",
+        "\n",
+        "print(df[\"Date\"].dtype)\n",
+        "print(df[\"Date\"].min())\n",
+        "print(df[\"Date\"].max())\n",
+        "print(df[\"Date\"].is_monotonic_increasing)\n",
+        "print(df[\"Date\"].duplicated().sum())\n",
+        "print(df[\"Date\"].dt.year)\n",
+        "print(df[\"Date\"].dt.month)\n",
+        "print(df[\"Date\"].dt.day)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "ox2rv8VvhbLh",
+        "outputId": "3157063e-7bfd-4d35-ca8a-27e404df877c"
+      },
+      "execution_count": 3,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "datetime64[ns]\n",
+            "2026-01-05 00:00:00\n",
+            "2026-01-14 00:00:00\n",
+            "True\n",
+            "0\n",
+            "0    2026\n",
+            "1    2026\n",
+            "2    2026\n",
+            "3    2026\n",
+            "4    2026\n",
+            "5    2026\n",
+            "6    2026\n",
+            "7    2026\n",
+            "8    2026\n",
+            "9    2026\n",
+            "Name: Date, dtype: int32\n",
+            "0    1\n",
+            "1    1\n",
+            "2    1\n",
+            "3    1\n",
+            "4    1\n",
+            "5    1\n",
+            "6    1\n",
+            "7    1\n",
+            "8    1\n",
+            "9    1\n",
+            "Name: Date, dtype: int32\n",
+            "0     5\n",
+            "1     6\n",
+            "2     7\n",
+            "3     8\n",
+            "4     9\n",
+            "5    10\n",
+            "6    11\n",
+            "7    12\n",
+            "8    13\n",
+            "9    14\n",
+            "Name: Date, dtype: int32\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from sklearn.preprocessing import StandardScaler\n",
+        "\n",
+        "scaler = StandardScaler()\n",
+        "\n",
+        "df_standardized = df.copy()\n",
+        "\n",
+        "df_standardized[\n",
+        "    [\"Study_Hours\", \"Attendance\", \"Math_Marks\", \"ML_Marks\", \"Final_Marks\"]\n",
+        "] = scaler.fit_transform(\n",
+        "    df[[\"Study_Hours\", \"Attendance\", \"Math_Marks\", \"ML_Marks\", \"Final_Marks\"]]\n",
+        ")\n",
+        "\n",
+        "print(df_standardized)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "WF8UIXV-hvCZ",
+        "outputId": "1661e546-12de-4e57-8245-9c6e8a2c3327"
+      },
+      "execution_count": 4,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "   Student_ID       Date  Study_Hours  Attendance  Math_Marks  ML_Marks  \\\n",
+            "0         101 2026-01-05    -0.870388   -0.581820   -0.822125 -0.754105   \n",
+            "1         102 2026-01-06     0.174078    0.145455   -0.279212  0.133077   \n",
+            "2         103 2026-01-07    -1.566699   -1.932474   -1.597716 -1.641286   \n",
+            "3         104 2026-01-08     0.870388    0.872730    0.961732  1.108977   \n",
+            "4         105 2026-01-09    -0.174078    0.457144    0.031024 -0.310514   \n",
+            "5         106 2026-01-10     1.566699    1.184420    1.504645  1.552568   \n",
+            "6         107 2026-01-11    -1.218544   -1.412992   -1.209920 -1.197696   \n",
+            "7         108 2026-01-12     0.522233    0.664937    0.651496  0.665386   \n",
+            "8         109 2026-01-13    -0.522233   -0.374027   -0.434330 -0.487950   \n",
+            "9         110 2026-01-14     1.218544    0.976627    1.194409  0.931541   \n",
+            "\n",
+            "   Final_Marks  \n",
+            "0    -0.789832  \n",
+            "1    -0.117635  \n",
+            "2    -1.630079  \n",
+            "3     1.058711  \n",
+            "4    -0.117635  \n",
+            "5     1.478835  \n",
+            "6    -1.209956  \n",
+            "7     0.638588  \n",
+            "8    -0.453733  \n",
+            "9     1.142736  \n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from sklearn.preprocessing import MinMaxScaler\n",
+        "\n",
+        "scaler = MinMaxScaler()\n",
+        "\n",
+        "df_normalized = df.copy()\n",
+        "\n",
+        "df_normalized[\n",
+        "    [\"Study_Hours\", \"Attendance\", \"Math_Marks\", \"ML_Marks\", \"Final_Marks\"]\n",
+        "] = scaler.fit_transform(\n",
+        "    df[[\"Study_Hours\", \"Attendance\", \"Math_Marks\", \"ML_Marks\", \"Final_Marks\"]]\n",
+        ")\n",
+        "\n",
+        "print(df_normalized)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "qn5LHCT5hxUm",
+        "outputId": "38c495e4-3156-402e-fbe6-44ccc41a3051"
+      },
+      "execution_count": 5,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "   Student_ID       Date  Study_Hours  Attendance  Math_Marks  ML_Marks  \\\n",
+            "0         101 2026-01-05     0.222222    0.433333       0.250  0.277778   \n",
+            "1         102 2026-01-06     0.555556    0.666667       0.425  0.555556   \n",
+            "2         103 2026-01-07     0.000000    0.000000       0.000  0.000000   \n",
+            "3         104 2026-01-08     0.777778    0.900000       0.825  0.861111   \n",
+            "4         105 2026-01-09     0.444444    0.766667       0.525  0.416667   \n",
+            "5         106 2026-01-10     1.000000    1.000000       1.000  1.000000   \n",
+            "6         107 2026-01-11     0.111111    0.166667       0.125  0.138889   \n",
+            "7         108 2026-01-12     0.666667    0.833333       0.725  0.722222   \n",
+            "8         109 2026-01-13     0.333333    0.500000       0.375  0.361111   \n",
+            "9         110 2026-01-14     0.888889    0.933333       0.900  0.805556   \n",
+            "\n",
+            "   Final_Marks  \n",
+            "0     0.270270  \n",
+            "1     0.486486  \n",
+            "2     0.000000  \n",
+            "3     0.864865  \n",
+            "4     0.486486  \n",
+            "5     1.000000  \n",
+            "6     0.135135  \n",
+            "7     0.729730  \n",
+            "8     0.378378  \n",
+            "9     0.891892  \n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "print(\"ORIGINAL DATA\")\n",
+        "print(df)\n",
+        "\n",
+        "print(\"\\nSTANDARDIZED DATA\")\n",
+        "print(df_standardized)\n",
+        "\n",
+        "print(\"\\nNORMALIZED DATA\")\n",
+        "print(df_normalized)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "ErH9anL5hzWP",
+        "outputId": "0644a39f-6068-430a-c92f-01b80e53d744"
+      },
+      "execution_count": 6,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "ORIGINAL DATA\n",
+            "   Student_ID       Date  Study_Hours  Attendance  Math_Marks  ML_Marks  \\\n",
+            "0         101 2026-01-05          2.5          78          65        70   \n",
+            "1         102 2026-01-06          4.0          85          72        80   \n",
+            "2         103 2026-01-07          1.5          65          55        60   \n",
+            "3         104 2026-01-08          5.0          92          88        91   \n",
+            "4         105 2026-01-09          3.5          88          76        75   \n",
+            "5         106 2026-01-10          6.0          95          95        96   \n",
+            "6         107 2026-01-11          2.0          70          60        65   \n",
+            "7         108 2026-01-12          4.5          90          84        86   \n",
+            "8         109 2026-01-13          3.0          80          70        73   \n",
+            "9         110 2026-01-14          5.5          93          91        89   \n",
+            "\n",
+            "   Final_Marks  \n",
+            "0           68  \n",
+            "1           76  \n",
+            "2           58  \n",
+            "3           90  \n",
+            "4           76  \n",
+            "5           95  \n",
+            "6           63  \n",
+            "7           85  \n",
+            "8           72  \n",
+            "9           91  \n",
+            "\n",
+            "STANDARDIZED DATA\n",
+            "   Student_ID       Date  Study_Hours  Attendance  Math_Marks  ML_Marks  \\\n",
+            "0         101 2026-01-05    -0.870388   -0.581820   -0.822125 -0.754105   \n",
+            "1         102 2026-01-06     0.174078    0.145455   -0.279212  0.133077   \n",
+            "2         103 2026-01-07    -1.566699   -1.932474   -1.597716 -1.641286   \n",
+            "3         104 2026-01-08     0.870388    0.872730    0.961732  1.108977   \n",
+            "4         105 2026-01-09    -0.174078    0.457144    0.031024 -0.310514   \n",
+            "5         106 2026-01-10     1.566699    1.184420    1.504645  1.552568   \n",
+            "6         107 2026-01-11    -1.218544   -1.412992   -1.209920 -1.197696   \n",
+            "7         108 2026-01-12     0.522233    0.664937    0.651496  0.665386   \n",
+            "8         109 2026-01-13    -0.522233   -0.374027   -0.434330 -0.487950   \n",
+            "9         110 2026-01-14     1.218544    0.976627    1.194409  0.931541   \n",
+            "\n",
+            "   Final_Marks  \n",
+            "0    -0.789832  \n",
+            "1    -0.117635  \n",
+            "2    -1.630079  \n",
+            "3     1.058711  \n",
+            "4    -0.117635  \n",
+            "5     1.478835  \n",
+            "6    -1.209956  \n",
+            "7     0.638588  \n",
+            "8    -0.453733  \n",
+            "9     1.142736  \n",
+            "\n",
+            "NORMALIZED DATA\n",
+            "   Student_ID       Date  Study_Hours  Attendance  Math_Marks  ML_Marks  \\\n",
+            "0         101 2026-01-05     0.222222    0.433333       0.250  0.277778   \n",
+            "1         102 2026-01-06     0.555556    0.666667       0.425  0.555556   \n",
+            "2         103 2026-01-07     0.000000    0.000000       0.000  0.000000   \n",
+            "3         104 2026-01-08     0.777778    0.900000       0.825  0.861111   \n",
+            "4         105 2026-01-09     0.444444    0.766667       0.525  0.416667   \n",
+            "5         106 2026-01-10     1.000000    1.000000       1.000  1.000000   \n",
+            "6         107 2026-01-11     0.111111    0.166667       0.125  0.138889   \n",
+            "7         108 2026-01-12     0.666667    0.833333       0.725  0.722222   \n",
+            "8         109 2026-01-13     0.333333    0.500000       0.375  0.361111   \n",
+            "9         110 2026-01-14     0.888889    0.933333       0.900  0.805556   \n",
+            "\n",
+            "   Final_Marks  \n",
+            "0     0.270270  \n",
+            "1     0.486486  \n",
+            "2     0.000000  \n",
+            "3     0.864865  \n",
+            "4     0.486486  \n",
+            "5     1.000000  \n",
+            "6     0.135135  \n",
+            "7     0.729730  \n",
+            "8     0.378378  \n",
+            "9     0.891892  \n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [],
+      "metadata": {
+        "id": "VF46VoFvh35Z"
+      },
+      "execution_count": null,
+      "outputs": []
+    }
+  ]
+}
