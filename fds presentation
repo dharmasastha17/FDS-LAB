@@ -1,0 +1,664 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "authorship_tag": "ABX9TyPAJrlXnUsSbLsW8qEWAviX",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/dharmasastha17/FDS-LAB/blob/main/fds%20presentation\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import pandas as pd\n",
+        "import numpy as np\n",
+        "import matplotlib.pyplot as plt\n",
+        "import seaborn as sns\n",
+        "import zipfile\n",
+        "from google.colab import files\n",
+        "from sklearn.preprocessing import StandardScaler, MinMaxScaler\n",
+        "\n",
+        "sns.set_theme(style=\"whitegrid\")\n"
+      ],
+      "metadata": {
+        "id": "1LoPtkkyKsUk"
+      },
+      "execution_count": 1,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "uploaded = files.upload()\n",
+        "\n",
+        "zip_file = next((f for f in uploaded if f.endswith(\".zip\")), None)\n",
+        "csv_file = next((f for f in uploaded if f.endswith(\".csv\")), None)\n",
+        "\n",
+        "if zip_file:\n",
+        "    with zipfile.ZipFile(zip_file, \"r\") as z:\n",
+        "        csv_name = next(\n",
+        "            f for f in z.namelist() if f.endswith(\".csv\")\n",
+        "        )\n",
+        "        with z.open(csv_name) as file:\n",
+        "            df = pd.read_csv(file)\n",
+        "elif csv_file:\n",
+        "    df = pd.read_csv(csv_file)\n",
+        "else:\n",
+        "    raise ValueError(\"Please upload a ZIP or CSV dataset.\")\n",
+        "\n",
+        "print(\"DATASET LOADED SUCCESSFULLY\")\n",
+        "print(\"\\nFirst 5 Rows:\")\n",
+        "print(df.head())"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 39
+        },
+        "id": "n76eb1quKtH1",
+        "outputId": "c5add2bb-5415-4986-baaf-8db3751bf2f4"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/plain": [
+              "<IPython.core.display.HTML object>"
+            ],
+            "text/html": [
+              "\n",
+              "     <input type=\"file\" id=\"files-e0468be5-b779-4b2a-b6ed-8768eec2b69d\" name=\"files[]\" multiple disabled\n",
+              "        style=\"border:none\" />\n",
+              "     <output id=\"result-e0468be5-b779-4b2a-b6ed-8768eec2b69d\">\n",
+              "      Upload widget is only available when the cell has been executed in the\n",
+              "      current browser session. Please rerun this cell to enable.\n",
+              "      </output>\n",
+              "      <script>// Copyright 2017 Google LLC\n",
+              "//\n",
+              "// Licensed under the Apache License, Version 2.0 (the \"License\");\n",
+              "// you may not use this file except in compliance with the License.\n",
+              "// You may obtain a copy of the License at\n",
+              "//\n",
+              "//      http://www.apache.org/licenses/LICENSE-2.0\n",
+              "//\n",
+              "// Unless required by applicable law or agreed to in writing, software\n",
+              "// distributed under the License is distributed on an \"AS IS\" BASIS,\n",
+              "// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n",
+              "// See the License for the specific language governing permissions and\n",
+              "// limitations under the License.\n",
+              "\n",
+              "/**\n",
+              " * @fileoverview Helpers for google.colab Python module.\n",
+              " */\n",
+              "(function(scope) {\n",
+              "function span(text, styleAttributes = {}) {\n",
+              "  const element = document.createElement('span');\n",
+              "  element.textContent = text;\n",
+              "  for (const key of Object.keys(styleAttributes)) {\n",
+              "    element.style[key] = styleAttributes[key];\n",
+              "  }\n",
+              "  return element;\n",
+              "}\n",
+              "\n",
+              "// Max number of bytes which will be uploaded at a time.\n",
+              "const MAX_PAYLOAD_SIZE = 100 * 1024;\n",
+              "\n",
+              "function _uploadFiles(inputId, outputId) {\n",
+              "  const steps = uploadFilesStep(inputId, outputId);\n",
+              "  const outputElement = document.getElementById(outputId);\n",
+              "  // Cache steps on the outputElement to make it available for the next call\n",
+              "  // to uploadFilesContinue from Python.\n",
+              "  outputElement.steps = steps;\n",
+              "\n",
+              "  return _uploadFilesContinue(outputId);\n",
+              "}\n",
+              "\n",
+              "// This is roughly an async generator (not supported in the browser yet),\n",
+              "// where there are multiple asynchronous steps and the Python side is going\n",
+              "// to poll for completion of each step.\n",
+              "// This uses a Promise to block the python side on completion of each step,\n",
+              "// then passes the result of the previous step as the input to the next step.\n",
+              "function _uploadFilesContinue(outputId) {\n",
+              "  const outputElement = document.getElementById(outputId);\n",
+              "  const steps = outputElement.steps;\n",
+              "\n",
+              "  const next = steps.next(outputElement.lastPromiseValue);\n",
+              "  return Promise.resolve(next.value.promise).then((value) => {\n",
+              "    // Cache the last promise value to make it available to the next\n",
+              "    // step of the generator.\n",
+              "    outputElement.lastPromiseValue = value;\n",
+              "    return next.value.response;\n",
+              "  });\n",
+              "}\n",
+              "\n",
+              "/**\n",
+              " * Generator function which is called between each async step of the upload\n",
+              " * process.\n",
+              " * @param {string} inputId Element ID of the input file picker element.\n",
+              " * @param {string} outputId Element ID of the output display.\n",
+              " * @return {!Iterable<!Object>} Iterable of next steps.\n",
+              " */\n",
+              "function* uploadFilesStep(inputId, outputId) {\n",
+              "  const inputElement = document.getElementById(inputId);\n",
+              "  inputElement.disabled = false;\n",
+              "\n",
+              "  const outputElement = document.getElementById(outputId);\n",
+              "  outputElement.innerHTML = '';\n",
+              "\n",
+              "  const pickedPromise = new Promise((resolve) => {\n",
+              "    inputElement.addEventListener('change', (e) => {\n",
+              "      resolve(e.target.files);\n",
+              "    });\n",
+              "  });\n",
+              "\n",
+              "  const cancel = document.createElement('button');\n",
+              "  inputElement.parentElement.appendChild(cancel);\n",
+              "  cancel.textContent = 'Cancel upload';\n",
+              "  const cancelPromise = new Promise((resolve) => {\n",
+              "    cancel.onclick = () => {\n",
+              "      resolve(null);\n",
+              "    };\n",
+              "  });\n",
+              "\n",
+              "  // Wait for the user to pick the files.\n",
+              "  const files = yield {\n",
+              "    promise: Promise.race([pickedPromise, cancelPromise]),\n",
+              "    response: {\n",
+              "      action: 'starting',\n",
+              "    }\n",
+              "  };\n",
+              "\n",
+              "  cancel.remove();\n",
+              "\n",
+              "  // Disable the input element since further picks are not allowed.\n",
+              "  inputElement.disabled = true;\n",
+              "\n",
+              "  if (!files) {\n",
+              "    return {\n",
+              "      response: {\n",
+              "        action: 'complete',\n",
+              "      }\n",
+              "    };\n",
+              "  }\n",
+              "\n",
+              "  for (const file of files) {\n",
+              "    const li = document.createElement('li');\n",
+              "    li.append(span(file.name, {fontWeight: 'bold'}));\n",
+              "    li.append(span(\n",
+              "        `(${file.type || 'n/a'}) - ${file.size} bytes, ` +\n",
+              "        `last modified: ${\n",
+              "            file.lastModifiedDate ? file.lastModifiedDate.toLocaleDateString() :\n",
+              "                                    'n/a'} - `));\n",
+              "    const percent = span('0% done');\n",
+              "    li.appendChild(percent);\n",
+              "\n",
+              "    outputElement.appendChild(li);\n",
+              "\n",
+              "    const fileDataPromise = new Promise((resolve) => {\n",
+              "      const reader = new FileReader();\n",
+              "      reader.onload = (e) => {\n",
+              "        resolve(e.target.result);\n",
+              "      };\n",
+              "      reader.readAsArrayBuffer(file);\n",
+              "    });\n",
+              "    // Wait for the data to be ready.\n",
+              "    let fileData = yield {\n",
+              "      promise: fileDataPromise,\n",
+              "      response: {\n",
+              "        action: 'continue',\n",
+              "      }\n",
+              "    };\n",
+              "\n",
+              "    // Use a chunked sending to avoid message size limits. See b/62115660.\n",
+              "    let position = 0;\n",
+              "    do {\n",
+              "      const length = Math.min(fileData.byteLength - position, MAX_PAYLOAD_SIZE);\n",
+              "      const chunk = new Uint8Array(fileData, position, length);\n",
+              "      position += length;\n",
+              "\n",
+              "      const base64 = btoa(String.fromCharCode.apply(null, chunk));\n",
+              "      yield {\n",
+              "        response: {\n",
+              "          action: 'append',\n",
+              "          file: file.name,\n",
+              "          data: base64,\n",
+              "        },\n",
+              "      };\n",
+              "\n",
+              "      let percentDone = fileData.byteLength === 0 ?\n",
+              "          100 :\n",
+              "          Math.round((position / fileData.byteLength) * 100);\n",
+              "      percent.textContent = `${percentDone}% done`;\n",
+              "\n",
+              "    } while (position < fileData.byteLength);\n",
+              "  }\n",
+              "\n",
+              "  // All done.\n",
+              "  yield {\n",
+              "    response: {\n",
+              "      action: 'complete',\n",
+              "    }\n",
+              "  };\n",
+              "}\n",
+              "\n",
+              "scope.google = scope.google || {};\n",
+              "scope.google.colab = scope.google.colab || {};\n",
+              "scope.google.colab._files = {\n",
+              "  _uploadFiles,\n",
+              "  _uploadFilesContinue,\n",
+              "};\n",
+              "})(self);\n",
+              "</script> "
+            ]
+          },
+          "metadata": {}
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "bUKCYxVKHWBm"
+      },
+      "outputs": [],
+      "source": [
+        "print(\"\\nDataset Shape:\", df.shape)\n",
+        "print(\"\\nColumn Names:\")\n",
+        "print(df.columns.tolist())\n",
+        "\n",
+        "print(\"\\nDataset Information:\")\n",
+        "df.info()\n",
+        "\n",
+        "print(\"\\nStatistical Summary:\")\n",
+        "print(df.describe(include=\"all\").T)"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "if \"Unnamed: 0\" in df.columns:\n",
+        "    df.drop(columns=[\"Unnamed: 0\"], inplace=True)\n"
+      ],
+      "metadata": {
+        "id": "30oocfv8K14P"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "print(\"\\nDuplicate Rows:\", df.duplicated().sum())\n",
+        "df.drop_duplicates(inplace=True)"
+      ],
+      "metadata": {
+        "id": "cWYbdKkIK-zW"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "print(\"\\nMissing Values:\")\n",
+        "print(df.isnull().sum())\n",
+        "\n",
+        "missing_percent = (df.isnull().sum() / len(df)) * 100\n",
+        "print(\"\\nMissing Percentage:\")\n",
+        "print(missing_percent.round(2))\n",
+        "\n",
+        "plt.figure(figsize=(10, 5))\n",
+        "sns.heatmap(df.isnull(), cbar=False, yticklabels=False)\n",
+        "plt.title(\"Missing Values Heatmap\")\n",
+        "plt.show()\n"
+      ],
+      "metadata": {
+        "id": "YvIgdId7LFkK"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "numerical_cols = df.select_dtypes(\n",
+        "    include=np.number\n",
+        ").columns.tolist()\n",
+        "\n",
+        "categorical_cols = df.select_dtypes(\n",
+        "    include=\"object\"\n",
+        ").columns.tolist()\n",
+        "\n",
+        "print(\"\\nNumerical Columns:\", numerical_cols)\n",
+        "print(\"\\nCategorical Columns:\", categorical_cols)\n"
+      ],
+      "metadata": {
+        "id": "g0O5I3HqLJUg"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "df[numerical_cols].hist(\n",
+        "    figsize=(12, 8), bins=20, edgecolor=\"black\"\n",
+        ")\n",
+        "plt.suptitle(\"Numerical Feature Distributions\")\n",
+        "plt.tight_layout()\n",
+        "plt.show()\n"
+      ],
+      "metadata": {
+        "id": "P6plNzzILNaw"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "for col in numerical_cols:\n",
+        "    plt.figure(figsize=(7, 3))\n",
+        "    sns.boxplot(x=df[col])\n",
+        "    plt.title(f\"Boxplot of {col}\")\n",
+        "    plt.show()"
+      ],
+      "metadata": {
+        "id": "5UlXs8PbLRGL"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "for col in categorical_cols:\n",
+        "    plt.figure(figsize=(9, 4))\n",
+        "    df[col].value_counts(dropna=False).plot(kind=\"bar\")\n",
+        "    plt.title(f\"Distribution of {col}\")\n",
+        "    plt.xlabel(col)\n",
+        "    plt.ylabel(\"Count\")\n",
+        "    plt.xticks(rotation=45, ha=\"right\")\n",
+        "    plt.tight_layout()\n",
+        "    plt.show()"
+      ],
+      "metadata": {
+        "id": "mdUwSgZTLUgZ"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        " plt.figure(figsize=(9, 6))\n",
+        "sns.heatmap(\n",
+        "    df[numerical_cols].corr(),\n",
+        "    annot=True,\n",
+        "    cmap=\"coolwarm\",\n",
+        "    fmt=\".2f\"\n",
+        ")\n",
+        "plt.title(\"Correlation Heatmap\")\n",
+        "plt.show()"
+      ],
+      "metadata": {
+        "id": "pEZ5drxsLXoq"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "for col in numerical_cols:\n",
+        "    df[col] = df[col].fillna(df[col].median())\n",
+        "\n",
+        "for col in categorical_cols:\n",
+        "    df[col] = df[col].fillna(\"Unknown\")\n",
+        "\n",
+        "print(\"\\nMissing Values After Imputation:\")\n",
+        "print(df.isnull().sum())\n"
+      ],
+      "metadata": {
+        "id": "pGVElv4OLbI4"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "df_encoded = pd.get_dummies(\n",
+        "    df,\n",
+        "    columns=categorical_cols,\n",
+        "    drop_first=False,\n",
+        "    dtype=int\n",
+        ")\n",
+        "\n",
+        "print(\"\\nEncoded Dataset:\")\n",
+        "print(df_encoded.head())\n",
+        "print(\"\\nEncoded Dataset Shape:\", df_encoded.shape)\n"
+      ],
+      "metadata": {
+        "id": "WTtw9Mr3Lg7u"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "standard_scaler = StandardScaler()\n",
+        "\n",
+        "df_standardized = df_encoded.copy()\n",
+        "df_standardized[numerical_cols] = standard_scaler.fit_transform(\n",
+        "    df_encoded[numerical_cols]\n",
+        ")\n",
+        "\n",
+        "print(\"\\nStandardized Dataset:\")\n",
+        "print(df_standardized.head())"
+      ],
+      "metadata": {
+        "id": "Ugt-eowXLoeA"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "minmax_scaler = MinMaxScaler()\n",
+        "\n",
+        "df_normalized = df_encoded.copy()\n",
+        "df_normalized[numerical_cols] = minmax_scaler.fit_transform(\n",
+        "    df_encoded[numerical_cols]\n",
+        ")\n",
+        "\n",
+        "print(\"\\nNormalized Dataset:\")\n",
+        "print(df_normalized.head())"
+      ],
+      "metadata": {
+        "id": "NE8kYGZ5LqWT"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "print(\"\\nFinal Dataset Shape:\", df_encoded.shape)\n",
+        "print(\"\\nMissing Values:\", df_encoded.isnull().sum().sum())\n",
+        "print(\"\\nDuplicate Rows:\", df_encoded.duplicated().sum())"
+      ],
+      "metadata": {
+        "id": "xaNd_xhlLuE2"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "df_encoded.to_csv(\"german_credit_preprocessed.csv\", index=False)\n",
+        "df_standardized.to_csv(\"german_credit_standardized.csv\", index=False)\n",
+        "df_normalized.to_csv(\"german_credit_normalized.csv\", index=False)\n",
+        "\n",
+        "print(\"\\nProcessed files saved successfully.\")\n"
+      ],
+      "metadata": {
+        "id": "bw_SrBTpLy6v"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "files.download(\"german_credit_preprocessed.csv\")"
+      ],
+      "metadata": {
+        "id": "tT6r6H_NL20v"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import matplotlib.pyplot as plt\n",
+        "import seaborn as sns\n",
+        "\n",
+        "target = \"Risk\" if \"Risk\" in df.columns else (\n",
+        "    \"Class Risk\" if \"Class Risk\" in df.columns else None\n",
+        ")\n",
+        "\n",
+        "if target:\n",
+        "    print(df[target].value_counts())\n",
+        "    print(df[target].value_counts(normalize=True) * 100)\n",
+        "\n",
+        "    sns.countplot(data=df, x=target)\n",
+        "    plt.title(\"Credit Risk Class Distribution\")\n",
+        "    plt.show()\n",
+        "else:\n",
+        "    print(\"No recognized target column found.\")"
+      ],
+      "metadata": {
+        "id": "crBdLTdmMez1"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "numeric = df.select_dtypes(include=\"number\").columns\n",
+        "\n",
+        "for col in numeric:\n",
+        "    q1 = df[col].quantile(0.25)\n",
+        "    q3 = df[col].quantile(0.75)\n",
+        "    iqr = q3 - q1\n",
+        "\n",
+        "    lower = q1 - 1.5 * iqr\n",
+        "    upper = q3 + 1.5 * iqr\n",
+        "\n",
+        "    count = ((df[col] < lower) | (df[col] > upper)).sum()\n",
+        "    print(col, \"Potential outliers:\", count)"
+      ],
+      "metadata": {
+        "id": "NIHsSdJtMf8O"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "if target and \"Sex\" in df.columns:\n",
+        "    print(\n",
+        "        df.groupby(\"Sex\", observed=True)[target]\n",
+        "        .value_counts(normalize=True)\n",
+        "        .unstack(fill_value=0)\n",
+        "    )\n",
+        "else:\n",
+        "    print(\"Target or Sex column is unavailable.\")"
+      ],
+      "metadata": {
+        "id": "2Itq3erRMie_"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from sklearn.model_selection import train_test_split\n",
+        "from sklearn.compose import ColumnTransformer\n",
+        "from sklearn.pipeline import Pipeline\n",
+        "from sklearn.preprocessing import OneHotEncoder, StandardScaler\n",
+        "from sklearn.impute import SimpleImputer\n",
+        "\n",
+        "if target:\n",
+        "    X = df.drop(columns=[target])\n",
+        "    y = df[target]\n",
+        "\n",
+        "    X_train, X_test, y_train, y_test = train_test_split(\n",
+        "        X, y, test_size=0.2, random_state=42, stratify=y\n",
+        "    )\n",
+        "\n",
+        "    num_cols = X_train.select_dtypes(include=\"number\").columns\n",
+        "    cat_cols = X_train.select_dtypes(\n",
+        "        exclude=\"number\"\n",
+        "    ).columns\n",
+        "\n",
+        "    numeric_pipeline = Pipeline([\n",
+        "        (\"imputer\", SimpleImputer(strategy=\"median\")),\n",
+        "        (\"scaler\", StandardScaler())\n",
+        "    ])\n",
+        "\n",
+        "    categorical_pipeline = Pipeline([\n",
+        "        (\"imputer\", SimpleImputer(strategy=\"most_frequent\")),\n",
+        "        (\"encoder\", OneHotEncoder(handle_unknown=\"ignore\"))\n",
+        "    ])\n",
+        "\n",
+        "    preprocessor = ColumnTransformer([\n",
+        "        (\"num\", numeric_pipeline, num_cols),\n",
+        "        (\"cat\", categorical_pipeline, cat_cols)\n",
+        "    ])\n",
+        "\n",
+        "    X_train_processed = preprocessor.fit_transform(X_train)\n",
+        "    X_test_processed = preprocessor.transform(X_test)\n",
+        "\n",
+        "    print(\"Training data:\", X_train_processed.shape)\n",
+        "    print(\"Testing data:\", X_test_processed.shape)\n",
+        "else:\n",
+        "    print(\"Identify the correct target column before model training.\")"
+      ],
+      "metadata": {
+        "id": "u7NfggoCMlgf"
+      },
+      "execution_count": null,
+      "outputs": []
+    }
+  ]
+}
